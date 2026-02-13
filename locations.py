@@ -276,4 +276,6 @@ headline_list = [
 ]
 
 ALL_MEDALS_LIST = [item for item in medals_races_list + medals_crashes_list if item.addr_check is not None]
+ALL_RACE_LIST = [item for item in medals_races_list if item.addr_check is not None]
+ALL_CRASH_LIST = [item for item in medals_crashes_list if item.addr_check is not None]
 ALL_OTHERS_LIST = [item for item in signature_list + headline_list if item.addr_check is not None]

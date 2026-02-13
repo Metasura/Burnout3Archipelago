@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from Options import Choice, PerGameCommonOptions, Toggle, DefaultOnToggle
+from Options import Choice, PerGameCommonOptions, Toggle, Range
 
 class GameplayMode(Choice):
      
@@ -9,11 +9,17 @@ class GameplayMode(Choice):
     option_crash_gold_medals = 2
     default = 0
 
-class EnableSignatures(DefaultOnToggle):
+class EnableSignatures(Toggle):
     display_name = "Enable Signature Takedowns"
 
-class EnableHeadlines(DefaultOnToggle):
+class EnableHeadlines(Toggle):
     display_name = "Enable Crash Headlines"
+
+class RequiredMedals(Range):
+    range_start = 1
+    range_end = 173
+    default = 173
+    display_name = "Required Gold Medals"
 
     
 @dataclass
@@ -21,3 +27,4 @@ class Burnout3Options(PerGameCommonOptions):
     gameplay_mode: GameplayMode
     enable_signatures: EnableSignatures
     enable_headlines: EnableHeadlines
+    required_medals: RequiredMedals

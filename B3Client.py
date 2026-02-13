@@ -14,9 +14,11 @@ except ImportError:
     logger.error("PINE missing."); sys.exit(1)
 
 from .items import ALL_ITEMS_BY_ID
-from .locations import ALL_MEDALS_LIST, ALL_OTHERS_LIST
+from .locations import ALL_MEDALS_LIST, ALL_OTHERS_LIST, ALL_RACE_LIST, ALL_CRASH_LIST 
 
 ALL_GOLD_IDS = {event.ap_id * 10 + 3 for event in ALL_MEDALS_LIST}
+ALL_RACE_GOLD_IDS = {event.ap_id * 10 + 3 for event in ALL_RACE_LIST}
+ALL_CRASH_GOLD_IDS = {event.ap_id * 10 + 3 for event in ALL_CRASH_LIST}
 
 VAL_UNLOCKED = 0x01
 VAL_LOCKED = 0x00
@@ -38,13 +40,26 @@ class PS2Context(CommonContext):
         self.keep_running = True
         self.last_deathlink = 0
         self.required_golds = 173
+        self.gamemode = 0
 
     def on_package(self, cmd: str, args: dict):
         super().on_package(cmd, args)
         if cmd == "Connected":
-            if "slot_data" in args and "req_golds" in args["slot_data"]:
-                self.required_golds = args["slot_data"]["req_golds"]
-                logger.info(f"Goal : Obtain {self.required_golds} Gold Medals.")
+            if "slot_data" in args:
+                slot_data = args["slot_data"]
+
+                if "gameplay_mode" in slot_data and "req_golds" in slot_data:
+                    # On assigne les variables
+                    self.gamemode = slot_data["gameplay_mode"]
+                    self.required_golds = slot_data["req_golds"]
+
+                    # On fait l'affichage en fonction du mode
+                    if self.gamemode == 0:
+                        logger.info(f"Goal : Obtain {self.required_golds} Gold Medals.")
+                    elif self.gamemode == 1:
+                        logger.info(f"Goal : Obtain {self.required_golds} Race Gold Medals.")
+                    elif self.gamemode == 2:
+                        logger.info(f"Goal : Obtain {self.required_golds} Crash Gold Medals.")
 
     def run_gui(self):
         from kvui import GameManager
@@ -151,16 +166,42 @@ def enforce_state(ctx, loop_count):
 def check_victory(ctx):
     if ctx.finished_game:
         return
-    checked_golds = ctx.locations_checked.intersection(ALL_GOLD_IDS)
-    total_golds_expected = len(ALL_GOLD_IDS) 
-    if len(checked_golds) >= ctx.required_golds:
-        logger.info(f"Victory ! {len(checked_golds)}/{total_golds_expected} Gold medals !")
-        from NetUtils import ClientStatus
-        run_coroutine_threadsafe(
-            ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}]),
-            ctx.loop
-        )
-        ctx.finished_game = True
+    
+    if ctx.gamemode == 0:
+        checked_golds = ctx.locations_checked.intersection(ALL_GOLD_IDS)
+        total_golds_expected = len(ALL_GOLD_IDS) 
+        if len(checked_golds) >= ctx.required_golds:
+            logger.info(f"Victory ! {len(checked_golds)}/{total_golds_expected} Gold medals !")
+            from NetUtils import ClientStatus
+            run_coroutine_threadsafe(
+                ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}]),
+                ctx.loop
+            )
+            ctx.finished_game = True
+
+    elif ctx.gamemode == 1:
+        checked_golds = ctx.locations_checked.intersection(ALL_RACE_GOLD_IDS)
+        total_golds_expected = len(ALL_RACE_GOLD_IDS) 
+        if len(checked_golds) >= ctx.required_golds:
+            logger.info(f"Victory ! {len(checked_golds)}/{total_golds_expected} Gold medals !")
+            from NetUtils import ClientStatus
+            run_coroutine_threadsafe(
+                ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}]),
+                ctx.loop
+            )
+            ctx.finished_game = True
+    
+    elif ctx.gamemode == 2:
+        checked_golds = ctx.locations_checked.intersection(ALL_CRASH_GOLD_IDS)
+        total_golds_expected = len(ALL_CRASH_GOLD_IDS) 
+        if len(checked_golds) >= ctx.required_golds:
+            logger.info(f"Victory ! {len(checked_golds)}/{total_golds_expected} Gold medals !")
+            from NetUtils import ClientStatus
+            run_coroutine_threadsafe(
+                ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}]),
+                ctx.loop
+            )
+            ctx.finished_game = True
 
 def pine_thread_loop(ctx: PS2Context):
     logger.info("--- PINE Thread Started ---")

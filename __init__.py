@@ -204,6 +204,9 @@ class Burnout3World(World):
     def __init__(self, *args, **kwargs):
         super(Burnout3World, self).__init__(*args, **kwargs)
 
+    def get_filler_item_name(self) -> str:
+        return "Bonus Points"
+
     def get_active_events(self):
         mode = self.options.gameplay_mode.value
         if mode == 1: return RACE_EVENT_NAMES
@@ -211,33 +214,40 @@ class Burnout3World(World):
         else: return ALL_EVENT_NAMES
 
     def generate_early(self):
-        standard_classes = ["Compact", "Muscle", "Coupe", "Sports", "Super"]
-        self.progression_cars = []
+        mode = self.options.gameplay_mode.value
+        requested_medals = self.options.required_medals.value
 
-        for car_class in standard_classes:
-            available_cars = CARS_BY_CLASS.get(car_class, [])
-            if available_cars:
-                selected_car = self.multiworld.random.choice(available_cars)
-                self.progression_cars.append(selected_car)
+        if mode == 1:
+            self.required_medals = min(requested_medals, 73)
+        
+        elif mode == 2:
+            self.required_medals = min(requested_medals, 100)
+        
+        else:
+            self.required_medals = min(requested_medals, 173)
+
+        if requested_medals > self.required_medals:
+            import logging
+            logging.warning(f"[Burnout 3] Player {self.player} requested {requested_medals} medals, but mode {mode} only has {self.required_medals}. Value capped.")   
+        pass
 
     def create_items(self):
-        active_events = self.get_active_events()
         item_pool = []
-        
         precollected_items = self.multiworld.precollected_items[self.player]
         precollected_names = [item.name for item in precollected_items]
-        
+
+        active_events = self.get_active_events()
+
         has_valid_combo = False
-        
         for item_name in precollected_names:
             if item_name.startswith("Unlock "):
                 event_name = item_name.replace("Unlock ", "")
                 required_class = EVENT_CAR_CLASSES.get(event_name)
-                
-                if required_class == "Special":
+
+                if required_class is None or required_class == "Special":
                     has_valid_combo = True
                     break
-                
+
                 allowed_cars = CARS_BY_CLASS.get(required_class, [])
                 for car in allowed_cars:
                     if car in precollected_names:
@@ -246,75 +256,84 @@ class Burnout3World(World):
             if has_valid_combo: break
 
         if not has_valid_combo:
+            mode = self.options.gameplay_mode.value
             
-            standard_classes = ["Compact", "Muscle", "Coupe", "Sports", "Super"]
+            available_races = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) != "Special" and "GP" not in e]
+            available_special = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) == "Special" and "GP" not in e]
+            available_crashes = [e for e in ALL_EVENT_NAMES if e in CRASH_EVENT_NAMES]
             
-            valid_start_events = [
-                e for e in active_events 
-                if EVENT_CAR_CLASSES.get(e) in standard_classes
-            ]
-            
-            if not valid_start_events:
-                valid_start_events = active_events
+            events_to_unlock = []
 
-            start_event = self.multiworld.random.choice(valid_start_events)
-            start_class = EVENT_CAR_CLASSES.get(start_event)
+            if mode == 1: 
+                if len(available_races) >= 1 and len(available_special) >= 1:
+                    events_to_unlock = [self.multiworld.random.choice(available_races),self.multiworld.random.choice(available_special)]
+                else:
+                    events_to_unlock = available_races
             
-            unlock_item_name = f"Unlock {start_event}"
-            item_evt = self.create_item(unlock_item_name)
-            self.multiworld.push_precollected(item_evt)
+            elif mode == 2: 
+                if len(available_crashes) >= 2:
+                    events_to_unlock = self.multiworld.random.sample(available_crashes, 2)
+                else:
+                    events_to_unlock = available_crashes
             
-            if start_class and start_class != "Special":
-                possible_cars = CARS_BY_CLASS.get(start_class, [])
+            else: 
+                if available_races and available_crashes:
+                    r = self.multiworld.random.choice(available_races)
+                    c = self.multiworld.random.choice(available_crashes)
+                    events_to_unlock = [r, c]
+                else:
+                    events_to_unlock = self.multiworld.random.sample(ALL_EVENT_NAMES, min(2, len(ALL_EVENT_NAMES)))
+
+            for event_name in events_to_unlock:
+                unlock_item_name = f"Unlock {event_name}"
+                if unlock_item_name not in precollected_names:
+                    item_evt = self.create_item(unlock_item_name)
+                    self.multiworld.push_precollected(item_evt)
+                    precollected_names.append(unlock_item_name)
+                    
+                required_class = EVENT_CAR_CLASSES.get(event_name)
                 
-                if possible_cars:
-                    start_car = self.multiworld.random.choice(possible_cars)
-                    item_car = self.create_item(start_car)
-                    self.multiworld.push_precollected(item_car)
+                if required_class and required_class != "Special":
+                    possible_cars = CARS_BY_CLASS.get(required_class, [])
+                    if possible_cars:
+                        has_class_car = any(c in precollected_names for c in possible_cars)
+                        
+                        if not has_class_car:
+                            start_car = self.multiworld.random.choice(possible_cars)
+                            item_car = self.create_item(start_car)
+                            self.multiworld.push_precollected(item_car)
+                            precollected_names.append(start_car)
 
-        
         for name in active_events:
             full_name = f"Unlock {name}"
-            if not any(i.name == full_name for i in self.multiworld.precollected_items[self.player]):
+            if full_name not in precollected_names:
                 item_pool.append(self.create_item(full_name))
 
-        for name in ALL_CAR_NAMES:
-            if not any(i.name == name for i in self.multiworld.precollected_items[self.player]):
-                item_pool.append(self.create_item(name))
-            
-        total_locations = 0
-        signatures_on = self.options.enable_signatures.value
-        headlines_on = self.options.enable_headlines.value
-
-        for name in ALL_EVENT_NAMES:
-            if name in ALL_SIGNATURE_NAMES:
-                if signatures_on:
-                    total_locations += 1
-            elif name in ALL_HEADLINE_NAMES:
-                if headlines_on:
-                    total_locations += 1
-            else:
-                total_locations += 3
-        
-        current_count = len(item_pool)
-        needed = total_locations - current_count
+        if mode in [0, 1]:
+            for name in ALL_CAR_NAMES:
+                if name not in precollected_names:
+                    item_pool.append(self.create_item(name))
+               
+        n_locations = len(self.multiworld.get_unfilled_locations(self.player))
+        n_items = len(item_pool)
+        needed = n_locations - n_items
         
         if needed > 0:
             for _ in range(needed):
-                item_pool.append(self.create_item("Bonus Points"))
+                item_pool.append(self.create_item(self.get_filler_item_name()))
         
         self.multiworld.itempool += item_pool
     
     def fill_slot_data(self):
-        gold_count = 0
-        active = self.get_active_events()
-        for name in active:
-            if name not in ALL_SIGNATURE_NAMES and name not in ALL_HEADLINE_NAMES:
-                gold_count += 1
+        req_sigs = self.options.enable_signatures.value if hasattr(self.options, 'enable_signatures') else False
+        req_heads = self.options.enable_headlines.value if hasattr(self.options, 'enable_headlines') else False
 
         return {
             "gameplay_mode": self.options.gameplay_mode.value,
-            "req_golds": gold_count  
+            # On envoie la valeur plafonnée qu'on a calculée dans generate_early
+            "req_golds": self.required_medals, 
+            "req_sigs": req_sigs,
+            "req_heads": req_heads
         }
 
     def create_item(self, name: str) -> Item:
@@ -327,7 +346,6 @@ class Burnout3World(World):
 
         if name.startswith("Unlock "):
             event_name = name.replace("Unlock ", "")
-            
             
             if mode == 1:
                 if event_name in RACE_EVENT_NAMES:
@@ -345,10 +363,7 @@ class Burnout3World(World):
                 classification = ItemClassification.progression
         
         elif name in ALL_CAR_NAMES:
-            if hasattr(self, "progression_cars") and name in self.progression_cars:
-                classification = ItemClassification.progression
-            else:
-                classification = ItemClassification.useful 
+            classification = ItemClassification.progression
         
         elif name == "Bonus Points":
             classification = ItemClassification.filler
@@ -361,33 +376,34 @@ class Burnout3World(World):
         menu_region = Region("Menu", self.player, self.multiworld)
         self.multiworld.regions.append(menu_region)
 
+        active_events = self.get_active_events()
         signatures_on = self.options.enable_signatures.value
         headlines_on = self.options.enable_headlines.value
+        mode = self.options.gameplay_mode.value
 
         for name in ALL_EVENT_NAMES:
             if name in ALL_SIGNATURE_NAMES:
-                if signatures_on:  
+                if signatures_on and mode in [0, 1] :  
                     loc_name = f"Signature Takedown - {name}"
                     if loc_name in self.location_name_to_id:
                         loc = Burnout3Location(self.player, loc_name, self.location_name_to_id[loc_name], menu_region)
                         menu_region.locations.append(loc)
         
-
             elif name in ALL_HEADLINE_NAMES:
-                if headlines_on: 
+                if headlines_on and mode in [0, 2]: 
                     loc_name = f"Crash Headline - {name}"
                     if loc_name in self.location_name_to_id:
                         loc = Burnout3Location(self.player, loc_name, self.location_name_to_id[loc_name], menu_region)
                         menu_region.locations.append(loc)
             
-            else:
-                unlock_item = f"Unlock {name}"
-                for type_name in ["Bronze", "Silver", "Gold"]:
-                    loc_name = f"{name} - {type_name}"
-                    if loc_name in self.location_name_to_id:
-                        loc = Burnout3Location(self.player, loc_name, self.location_name_to_id[loc_name], menu_region)
-                        loc.access_rule = lambda state, n=unlock_item: state.has(n, self.player)
-                        menu_region.locations.append(loc)
+        for name in active_events:
+            unlock_item = f"Unlock {name}"
+            for type_name in ["Bronze", "Silver", "Gold"]:
+                loc_name = f"{name} - {type_name}"
+                if loc_name in self.location_name_to_id:
+                    loc = Burnout3Location(self.player, loc_name, self.location_name_to_id[loc_name], menu_region)
+                    loc.access_rule = lambda state, n=unlock_item: state.has(n, self.player)
+                    menu_region.locations.append(loc)
         
         victory_loc = Burnout3Location(self.player, "Victory", None, menu_region)
         victory_loc.place_locked_item(self.create_item("Victory"))
