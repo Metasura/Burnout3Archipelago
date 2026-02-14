@@ -18,7 +18,7 @@ Archipelago for Burnout 3 Takedown
    - Compact Type 1
    - Compact Type 2
    - Compact Type 3
-- Otherwise you will start with a random Race + Car + Crash in All Mode, a random Race + Car in Race Mode or a random Crash in Crash Mode.
+- Otherwise you will start with a random Race + Car + Crash in All Mode, 2 Random Races (1 Normal and 1 Special (GP Excluded)) + 1 Car in Race Mode or 2 Random Crashs in Crash Mode.
 - You can choose how many Gold Medal you need to complete the game.
 - All Mode : You need x Gold Medal up to 173.
 - Race Mode : You need x Gold Medal up to 73 .
