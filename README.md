@@ -25,6 +25,6 @@ Archipelago for Burnout 3 Takedown
 - Crash Mode : You need x Gold Medal up to 100.
 - You can enable the Signature Takedowns (20) (Only in All Mode or Race Mode).
 - You can enable the Crash Headline (10) (Only in All Mode or Crash Mode).
-- Option to choose which Medals count as gold coming soon.
+- Option lower required medal to Silver or Bronze (Bronze would break Solo Gen) coming soon.
 - Trophies coming soon.
     
