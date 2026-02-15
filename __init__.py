@@ -363,7 +363,16 @@ class Burnout3World(World):
                 classification = ItemClassification.progression
         
         elif name in ALL_CAR_NAMES:
-            classification = ItemClassification.progression
+            is_standard_car = any(
+                name in car_list 
+                for car_class, car_list in CARS_BY_CLASS.items() 
+                if car_class != "Special"
+            )
+
+            if is_standard_car:
+                classification = ItemClassification.progression
+            else:
+                classification = ItemClassification.filler
         
         elif name == "Bonus Points":
             classification = ItemClassification.filler

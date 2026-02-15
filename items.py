@@ -71,10 +71,10 @@ cars_list = [
     # Special Class
     BurnoutItem(21053050,"Oval Racer Special", 0x051BFD2),
     BurnoutItem(21053051,"Custom Coupe Ultimate", 0x051BFD3),
-    BurnoutItem(21053052,"Euro Circtuit Racer", 0x051BFD4),
+    BurnoutItem(21053052,"Euro Circuit Racer", 0x051BFD4),
     BurnoutItem(21053053,"Classic Hotrod", 0x051BFD5),
-    BurnoutItem(21053054,"US Circtuit Racer", 0x051BFD7),
-    BurnoutItem(21053055,"World Circtuit Racer", 0x051BFD8),
+    BurnoutItem(21053054,"US Circuit Racer", 0x051BFD7),
+    BurnoutItem(21053055,"World Circuit Racer", 0x051BFD8),
 
     # Crash Class 
     BurnoutItem(21053056,"Heavy Pick-Up", 0x051BFD9),

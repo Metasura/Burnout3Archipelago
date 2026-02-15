@@ -45,7 +45,7 @@ medals_races_list = [
     BurnoutItem(21051024, "Downtown - Preview Lap 2 (USA)",         0x0051BEBE),
 
     # Winter City
-    BurnoutItem(21051025, "Winter City - Race (Europe)",            0x0051BE9F),
+    BurnoutItem(21051025, "Winter City - Race (Europe)",            0x0051BE9E),
     BurnoutItem(21051026, "Winter City - Special Event (Europe)",   0x0051BEA4),
     BurnoutItem(21051027, "Winter City - Eliminator (Europe)",      0x0051BEA9),
 
@@ -56,7 +56,7 @@ medals_races_list = [
     # Alpine
     BurnoutItem(21051030, "Alpine - Special Event (Europe)",        0x0051BE93),
     BurnoutItem(21051031, "Alpine - Road Rage (Europe)",            0x0051BEA0),
-    BurnoutItem(21051032, "Alpine - Race (Europe)",                 0x0051BEA3),
+    BurnoutItem(21051032, "Alpine - Race (Europe)",                 0x0051BEA1),
     BurnoutItem(21051033, "Alpine - Face-Off (Europe)",             0x0051BEB4),
 
     # Continental Run
@@ -67,8 +67,8 @@ medals_races_list = [
     BurnoutItem(21051038, "Continental Run - Face-Off 2 (Europe)",    0x0051BEBA),
 
     # Alpine Expressway
-    BurnoutItem(21051039, "Alpine Expressway - Sports GP (Europe)", 0x0051BE9E),
-    BurnoutItem(21051040, "Alpine Expressway - Race (Europe)",      0x0051BEBB),
+    BurnoutItem(21051039, "Alpine Expressway - Sports GP (Europe)", 0x0051BEBB),
+    BurnoutItem(21051040, "Alpine Expressway - Race (Europe)",      0x0051BEA3),
 
     # Riviera
     BurnoutItem(21051041, "Riviera - Road Rage 1 (Europe)",         0x0051BEA5),
@@ -79,7 +79,7 @@ medals_races_list = [
     # Coastal Dream
     BurnoutItem(21051045, "Coastal Dream - Preview Lap (Europe)",   0x0051BE95),
     BurnoutItem(21051046, "Coastal Dream - Race (Europe)",          0x0051BEAE),
-    BurnoutItem(21051047, "Coastal Dream - Road Rage 1 (Europe)",   0x0051BEB5),
+    BurnoutItem(21051047, "Coastal Dream - Road Rage 1 (Europe)",   0x0051BE9F),
     BurnoutItem(21051048, "Coastal Dream - Road Rage 2 (Europe)",   0x0051BEB6),
 
     # Vineyard
