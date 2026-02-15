@@ -129,7 +129,7 @@ races_list = [
     BurnoutItem(21051024, "Downtown - Preview Lap 2 (USA)",         0x0051C02F),
 
     # Winter City
-    BurnoutItem(21051025, "Winter City - Race (Europe)",            0x0051C010),
+    BurnoutItem(21051025, "Winter City - Race (Europe)",            0x0051C00F),
     BurnoutItem(21051026, "Winter City - Special Event (Europe)",   0x0051C015),
     BurnoutItem(21051027, "Winter City - Eliminator (Europe)",      0x0051C01A),
 
@@ -140,7 +140,7 @@ races_list = [
     # Alpine
     BurnoutItem(21051030, "Alpine - Special Event (Europe)",        0x0051C004),
     BurnoutItem(21051031, "Alpine - Road Rage (Europe)",            0x0051C011),
-    BurnoutItem(21051032, "Alpine - Race (Europe)",                 0x0051C014),
+    BurnoutItem(21051032, "Alpine - Race (Europe)",                 0x0051C010),
     BurnoutItem(21051033, "Alpine - Face-Off (Europe)",             0x0051C025),
 
     # Continental Run
@@ -151,8 +151,8 @@ races_list = [
     BurnoutItem(21051038, "Continental Run - Face-Off 2 (Europe)",    0x0051C02B),
 
     # Alpine Expressway
-    BurnoutItem(21051039, "Alpine Expressway - Sports GP (Europe)", 0x0051C00F),
-    BurnoutItem(21051040, "Alpine Expressway - Race (Europe)",      0x0051C02C),
+    BurnoutItem(21051039, "Alpine Expressway - Sports GP (Europe)", 0x0051C02C),
+    BurnoutItem(21051040, "Alpine Expressway - Race (Europe)",      0x0051C014),
 
     # Riviera
     BurnoutItem(21051041, "Riviera - Road Rage 1 (Europe)",         0x0051C016),
@@ -168,7 +168,7 @@ races_list = [
 
     # Vineyard
     BurnoutItem(21051049, "Vineyard - Special Event (Europe)",      0x0051BFFC),
-    BurnoutItem(21051050, "Vineyard - Road Rage 1 (Europe)",        0x0051C012),
+    BurnoutItem(21051050, "Vineyard - Road Rage 1 (Europe)",        0x0051C010),
     BurnoutItem(21051051, "Vineyard - Face-Off (Europe)",           0x0051C018),
     BurnoutItem(21051052, "Vineyard - Coupe GP (Europe)",           0x0051C01B),
     BurnoutItem(21051053, "Vineyard - Road Rage 2 (Europe)",        0x0051C01E),
