@@ -28,3 +28,5 @@ Archipelago for Burnout 3 Takedown
 - Option lower required medal to Silver or Bronze (Bronze would break Solo Gen) coming soon.
 - Trophies coming soon.
     
+## Known Issue
+ - In Race Mode (and probably All Mode) the car can rarely be replaced by a filler item (Bonus Point), game should still be beatable.
