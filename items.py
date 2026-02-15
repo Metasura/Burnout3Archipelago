@@ -140,7 +140,7 @@ races_list = [
     # Alpine
     BurnoutItem(21051030, "Alpine - Special Event (Europe)",        0x0051C004),
     BurnoutItem(21051031, "Alpine - Road Rage (Europe)",            0x0051C011),
-    BurnoutItem(21051032, "Alpine - Race (Europe)",                 0x0051C010),
+    BurnoutItem(21051032, "Alpine - Race (Europe)",                 0x0051C012),
     BurnoutItem(21051033, "Alpine - Face-Off (Europe)",             0x0051C025),
 
     # Continental Run
