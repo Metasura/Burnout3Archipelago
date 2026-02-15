@@ -12,12 +12,6 @@ Archipelago for Burnout 3 Takedown
   - In PCSX2, System ---> Settings ---> Advanced tab ---> PINE Settings, **Check** Enable and ensure Slot is set to 28011.
 
 ## YAML Options
-- If you want the vanilla start add thoses item to your start_inventory (you should use Options Creator within the Archipelago Launcher) : 
-   - Unlock Silver Lake - Race (USA)
-   - Silver Lake - Trailer Trash (USA)
-   - Compact Type 1
-   - Compact Type 2
-   - Compact Type 3
 - Otherwise you will start with a random Race + Car + Crash in All Mode, 2 Random Races (1 Normal and 1 Special (GP Excluded)) + 1 Car in Race Mode or 2 Random Crashs in Crash Mode.
 - You can choose how many Gold Medal you need to complete the game.
 - All Mode : You need x Gold Medal up to 173.
@@ -28,3 +22,6 @@ Archipelago for Burnout 3 Takedown
 - Option lower required medal to Silver or Bronze (Bronze would break Solo Gen) coming soon.
 - Trophies coming soon.
     
+## Known Issue
+ - In Race Mode (and probably All Mode) the car can rarely be replaced by a filler item (Bonus Point), game should still be beatable.
+ - Start Inventory doesn't work.
