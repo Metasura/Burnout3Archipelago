@@ -16,7 +16,7 @@ cars_list = [
     BurnoutItem(21053004,"Modified Compact", 0x051BFA4),
     BurnoutItem(21053005,"Custom Compact", 0x051BFA5),
     BurnoutItem(21053006,"Assassin Compact", 0x051BFA6),
-    BurnoutItem(21053007,"Compact Protoype", 0x051BFA7),
+    BurnoutItem(21053007,"Compact Prototype", 0x051BFA7),
     BurnoutItem(21053008,"Compact DX", 0x051BFA8),
     BurnoutItem(21053009,"Dominator Compact", 0x051BFA9),
 
@@ -28,7 +28,7 @@ cars_list = [
     BurnoutItem(21053014,"Modified Muscle", 0x051BFAE),
     BurnoutItem(21053015,"Custom Muscle", 0x051BFAF),
     BurnoutItem(21053016,"Assassin Muscle", 0x051BFB0),
-    BurnoutItem(21053017,"Muscle Protoype", 0x051BFB1),
+    BurnoutItem(21053017,"Muscle Prototype", 0x051BFB1),
     BurnoutItem(21053018,"Muscle DX", 0x051BFB2),
     BurnoutItem(21053019,"Dominator Muscle", 0x051BFB3),
 
@@ -40,7 +40,7 @@ cars_list = [
     BurnoutItem(21053024,"Modified Coupe", 0x051BFB8),
     BurnoutItem(21053025,"Custom Coupe", 0x051BFB9),
     BurnoutItem(21053026,"Assassin Coupe", 0x051BFBA),
-    BurnoutItem(21053027,"Coupe Protoype", 0x051BFBB),
+    BurnoutItem(21053027,"Coupe Prototype", 0x051BFBB),
     BurnoutItem(21053028,"Coupe DX", 0x051BFBC),
     BurnoutItem(21053029,"Dominator Coupe", 0x051BFBD),
 
@@ -52,7 +52,7 @@ cars_list = [
     BurnoutItem(21053034,"Modified Sports", 0x051BFC2),
     BurnoutItem(21053035,"Custom Sports", 0x051BFC3),
     BurnoutItem(21053036,"Assassin Sports", 0x051BFC4),
-    BurnoutItem(21053037,"Sports Protoype", 0x051BFC5),
+    BurnoutItem(21053037,"Sports Prototype", 0x051BFC5),
     BurnoutItem(21053038,"Sports DX", 0x051BFC6),
     BurnoutItem(21053039,"Dominator Sports", 0x051BFC7),
 
@@ -64,7 +64,7 @@ cars_list = [
     BurnoutItem(21053044,"Modified Super", 0x051BFCC),
     BurnoutItem(21053045,"Custom Super", 0x051BFCD),
     BurnoutItem(21053046,"Assassin Super", 0x051BFCE),
-    BurnoutItem(21053047,"Super Protoype", 0x051BFCF),
+    BurnoutItem(21053047,"Super Prototype", 0x051BFCF),
     BurnoutItem(21053048,"Super DX", 0x051BFD0),
     BurnoutItem(21053049,"Dominator Super", 0x051BFD1),
 

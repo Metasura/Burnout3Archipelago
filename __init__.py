@@ -69,8 +69,8 @@ EVENT_CAR_CLASSES = {
     "Continental Run - Race 2 (Europe)": "Special",
     "Continental Run - Special Event (Europe)": "Special",
     "Continental Run - Face-Off 2 (Europe)": "Sports",
-    "Alpine Expressway - Sports GP (Europe)": "Coupe",
-    "Alpine Expressway - Race (Europe)": "Sports",
+    "Alpine Expressway - Sports GP (Europe)": "Sports",
+    "Alpine Expressway - Race (Europe)": "Coupe",
     "Riviera - Road Rage 1 (Europe)": "Coupe",
     "Riviera - Burning Lap (Europe)": "Special",
     "Riviera - Eliminator (Europe)": "Sports",
@@ -148,9 +148,12 @@ def run_mapping():
     all_medals = medals_races_list + medals_crashes_list
     
     for medals in all_medals:
-        loc_table[f"{medals.name} - Bronze"] = medals.ap_id * 10 + 1
-        loc_table[f"{medals.name} - Silver"] = medals.ap_id * 10 + 2
-        loc_table[f"{medals.name} - Gold"]   = medals.ap_id * 10 + 3
+        if "Face-Off" not in medals.name:
+            loc_table[f"{medals.name} - Bronze"] = medals.ap_id * 10 + 1
+            loc_table[f"{medals.name} - Silver"] = medals.ap_id * 10 + 2
+            loc_table[f"{medals.name} - Gold"]   = medals.ap_id * 10 + 3
+        else:
+            loc_table[f"{medals.name} - Gold"]   = medals.ap_id * 10 + 3
 
     all_events = races_list + crashes_list
 
@@ -203,6 +206,8 @@ class Burnout3World(World):
 
     def __init__(self, *args, **kwargs):
         super(Burnout3World, self).__init__(*args, **kwargs)
+        self.actual_event_list = []
+        self.medal_suffix = "Gold"
 
     def get_filler_item_name(self) -> str:
         return "Bonus Points"
@@ -215,28 +220,80 @@ class Burnout3World(World):
 
     def generate_early(self):
         mode = self.options.gameplay_mode.value
-        requested_medals = self.options.required_medals.value
+        req_medals_count = self.options.required_medals.value
+        gen_events_count = self.options.generated_events.value
+        medal_type_opt = self.options.medal_type.value
 
-        if mode == 1:
-            self.required_medals = min(requested_medals, 73)
-        
-        elif mode == 2:
-            self.required_medals = min(requested_medals, 100)
-        
-        else:
-            self.required_medals = min(requested_medals, 173)
+        if medal_type_opt == 0: self.medal_suffix = "Bronze"
+        elif medal_type_opt == 1: self.medal_suffix = "Silver"
+        else: self.medal_suffix = "Gold"
 
-        if requested_medals > self.required_medals:
+        max_events_in_mode = 173
+        if mode == 1: max_events_in_mode = 73
+        elif mode == 2: max_events_in_mode = 100
+
+        self.final_gen_count = min(gen_events_count, max_events_in_mode)
+        self.final_req_count = min(req_medals_count, self.final_gen_count)
+
+        if self.final_req_count != req_medals_count or self.final_gen_count != gen_events_count:
             import logging
-            logging.warning(f"[Burnout 3] Player {self.player} requested {requested_medals} medals, but mode {mode} only has {self.required_medals}. Value capped.")   
-        pass
+            logging.info(f"[Burnout 3] Adjusted counts: Generated {self.final_gen_count} (requested {gen_events_count}), Required {self.final_req_count} (requested {req_medals_count})")
+
+        full_pool = self.get_active_events()
+
+        if len(full_pool) > self.final_gen_count:
+            self.actual_event_list = self.multiworld.random.sample(full_pool, self.final_gen_count)
+        else:
+            self.actual_event_list = full_pool
+        
+        self.progression_cars = []
+        for car_class, car_list in CARS_BY_CLASS.items():
+            if car_class != "Special" and car_list:
+                self.progression_cars.append(self.multiworld.random.choice(car_list))
+
+    def create_regions(self):
+        menu_region = Region("Menu", self.player, self.multiworld)
+        self.multiworld.regions.append(menu_region)
+
+        signatures_on = self.options.enable_signatures.value
+        headlines_on = self.options.enable_headlines.value
+        mode = self.options.gameplay_mode.value
+
+        for name in ALL_EVENT_NAMES:
+            if name in ALL_SIGNATURE_NAMES:
+                if signatures_on and mode in [0, 1] :  
+                    loc_name = f"Signature Takedown - {name}"
+                    if loc_name in self.location_name_to_id:
+                        loc = Burnout3Location(self.player, loc_name, self.location_name_to_id[loc_name], menu_region)
+                        menu_region.locations.append(loc)
+        
+            elif name in ALL_HEADLINE_NAMES:
+                if headlines_on and mode in [0, 2]: 
+                    loc_name = f"Crash Headline - {name}"
+                    if loc_name in self.location_name_to_id:
+                        loc = Burnout3Location(self.player, loc_name, self.location_name_to_id[loc_name], menu_region)
+                        menu_region.locations.append(loc)
+            
+        for name in self.actual_event_list:
+            unlock_item = f"Unlock {name}"
+            for type_name in ["Bronze", "Silver", "Gold"]:
+                loc_name = f"{name} - {type_name}"
+                if loc_name in self.location_name_to_id:
+                    loc = Burnout3Location(self.player, loc_name, self.location_name_to_id[loc_name], menu_region)
+                    loc.access_rule = lambda state, n=unlock_item: state.has(n, self.player)
+                    menu_region.locations.append(loc)
+        
+        victory_loc = Burnout3Location(self.player, "Victory", None, menu_region)
+        victory_loc.place_locked_item(self.create_item("Victory"))
+        menu_region.locations.append(victory_loc)   
+        menu_region.add_exits([])
 
     def create_items(self):
         item_pool = []
         precollected_items = self.multiworld.precollected_items[self.player]
         precollected_names = [item.name for item in precollected_items]
-
-        active_events = self.get_active_events()
+        mode = self.options.gameplay_mode.value
+        active_events = self.actual_event_list
 
         has_valid_combo = False
         for item_name in precollected_names:
@@ -256,7 +313,7 @@ class Burnout3World(World):
             if has_valid_combo: break
 
         if not has_valid_combo:
-            mode = self.options.gameplay_mode.value
+            
             
             available_races = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) != "Special" and "GP" not in e]
             available_special = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) == "Special" and "GP" not in e]
@@ -264,11 +321,14 @@ class Burnout3World(World):
             
             events_to_unlock = []
 
-            if mode == 1: 
+            if mode == 1:
+                if not available_races: available_races = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) != "Special" and "GP" not in e]
+                if not available_special: available_special = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) == "Special" and "GP" not in e]
+
                 if len(available_races) >= 1 and len(available_special) >= 1:
                     events_to_unlock = [self.multiworld.random.choice(available_races),self.multiworld.random.choice(available_special)]
                 else:
-                    events_to_unlock = available_races
+                    events_to_unlock = available_races[:2]
             
             elif mode == 2: 
                 if len(available_crashes) >= 2:
@@ -276,13 +336,16 @@ class Burnout3World(World):
                 else:
                     events_to_unlock = available_crashes
             
-            else: 
+            else:
+                if not available_races: available_races = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and "GP" not in e]
+                if not available_crashes: available_crashes = [e for e in ALL_EVENT_NAMES if e in CRASH_EVENT_NAMES]
+
                 if available_races and available_crashes:
                     r = self.multiworld.random.choice(available_races)
                     c = self.multiworld.random.choice(available_crashes)
                     events_to_unlock = [r, c]
                 else:
-                    events_to_unlock = self.multiworld.random.sample(ALL_EVENT_NAMES, min(2, len(ALL_EVENT_NAMES)))
+                    events_to_unlock = self.multiworld.random.sample(ALL_EVENT_NAMES, 2)
 
             for event_name in events_to_unlock:
                 unlock_item_name = f"Unlock {event_name}"
@@ -310,14 +373,29 @@ class Burnout3World(World):
                 item_pool.append(self.create_item(full_name))
 
         if mode in [0, 1]:
+            cars_to_add = [name for name in ALL_CAR_NAMES if name not in precollected_names]
+            prog_cars = [c for c in cars_to_add if hasattr(self, "progression_cars") and c in self.progression_cars]
+            useful_cars = [c for c in cars_to_add if c not in prog_cars]
+
+            for car in prog_cars:
+                item_pool.append(self.create_item(car))
+
             for name in ALL_CAR_NAMES:
                 if name not in precollected_names:
                     item_pool.append(self.create_item(name))
-               
-        n_locations = len(self.multiworld.get_unfilled_locations(self.player))
-        n_items = len(item_pool)
-        needed = n_locations - n_items
+
+            unfilled_locs = len(self.multiworld.get_unfilled_locations(self.player))
+            space_left = unfilled_locs - len(item_pool)
+
+            self.multiworld.random.shuffle(useful_cars)
+            for car in useful_cars:
+                if space_left > 0:
+                    item_pool.append(self.create_item(car))
+                    space_left -= 1
         
+        unfilled_locs = len(self.multiworld.get_unfilled_locations(self.player))
+        needed = unfilled_locs - len(item_pool)        
+
         if needed > 0:
             for _ in range(needed):
                 item_pool.append(self.create_item(self.get_filler_item_name()))
@@ -330,8 +408,8 @@ class Burnout3World(World):
 
         return {
             "gameplay_mode": self.options.gameplay_mode.value,
-            # On envoie la valeur plafonnée qu'on a calculée dans generate_early
-            "req_golds": self.required_medals, 
+            "req_golds": self.final_req_count,
+            "req_medal_type": self.options.medal_type.value, 
             "req_sigs": req_sigs,
             "req_heads": req_heads
         }
@@ -363,16 +441,11 @@ class Burnout3World(World):
                 classification = ItemClassification.progression
         
         elif name in ALL_CAR_NAMES:
-            is_standard_car = any(
-                name in car_list 
-                for car_class, car_list in CARS_BY_CLASS.items() 
-                if car_class != "Special"
-            )
 
-            if is_standard_car:
+            if hasattr(self, "progression_cars") and name in self.progression_cars:
                 classification = ItemClassification.progression
             else:
-                classification = ItemClassification.filler
+                classification = ItemClassification.useful
         
         elif name == "Bonus Points":
             classification = ItemClassification.filler
@@ -381,43 +454,6 @@ class Burnout3World(World):
 
         return Burnout3Item(name, classification, item_id, player)
 
-    def create_regions(self):
-        menu_region = Region("Menu", self.player, self.multiworld)
-        self.multiworld.regions.append(menu_region)
-
-        active_events = self.get_active_events()
-        signatures_on = self.options.enable_signatures.value
-        headlines_on = self.options.enable_headlines.value
-        mode = self.options.gameplay_mode.value
-
-        for name in ALL_EVENT_NAMES:
-            if name in ALL_SIGNATURE_NAMES:
-                if signatures_on and mode in [0, 1] :  
-                    loc_name = f"Signature Takedown - {name}"
-                    if loc_name in self.location_name_to_id:
-                        loc = Burnout3Location(self.player, loc_name, self.location_name_to_id[loc_name], menu_region)
-                        menu_region.locations.append(loc)
-        
-            elif name in ALL_HEADLINE_NAMES:
-                if headlines_on and mode in [0, 2]: 
-                    loc_name = f"Crash Headline - {name}"
-                    if loc_name in self.location_name_to_id:
-                        loc = Burnout3Location(self.player, loc_name, self.location_name_to_id[loc_name], menu_region)
-                        menu_region.locations.append(loc)
-            
-        for name in active_events:
-            unlock_item = f"Unlock {name}"
-            for type_name in ["Bronze", "Silver", "Gold"]:
-                loc_name = f"{name} - {type_name}"
-                if loc_name in self.location_name_to_id:
-                    loc = Burnout3Location(self.player, loc_name, self.location_name_to_id[loc_name], menu_region)
-                    loc.access_rule = lambda state, n=unlock_item: state.has(n, self.player)
-                    menu_region.locations.append(loc)
-        
-        victory_loc = Burnout3Location(self.player, "Victory", None, menu_region)
-        victory_loc.place_locked_item(self.create_item("Victory"))
-        menu_region.locations.append(victory_loc)   
-        menu_region.add_exits([])
 
     def set_rules(self):
         def has_car_class(state, car_class):
@@ -471,12 +507,11 @@ class Burnout3World(World):
                     pass
 
         def victory_rule(state):
-            required_events = self.get_active_events()
-            for name in required_events:
+            for name in self.actual_event_list:
                 if name in ALL_SIGNATURE_NAMES or name in ALL_HEADLINE_NAMES:
                     continue
                 
-                loc_name = f"{name} - Gold"
+                loc_name = f"{name} - {self.medal_suffix}"
                 try:
                     loc = self.multiworld.get_location(loc_name, self.player)
                     if not loc.can_reach(state):

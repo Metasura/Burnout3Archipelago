@@ -79,12 +79,12 @@ medals_races_list = [
     # Coastal Dream
     BurnoutItem(21051045, "Coastal Dream - Preview Lap (Europe)",   0x0051BE95),
     BurnoutItem(21051046, "Coastal Dream - Race (Europe)",          0x0051BEAE),
-    BurnoutItem(21051047, "Coastal Dream - Road Rage 1 (Europe)",   0x0051BE9F),
+    BurnoutItem(21051047, "Coastal Dream - Road Rage 1 (Europe)",   0x0051BEB5),
     BurnoutItem(21051048, "Coastal Dream - Road Rage 2 (Europe)",   0x0051BEB6),
 
     # Vineyard
     BurnoutItem(21051049, "Vineyard - Special Event (Europe)",      0x0051BE8B),
-    BurnoutItem(21051050, "Vineyard - Road Rage 1 (Europe)",        0x0051BEA1),
+    BurnoutItem(21051050, "Vineyard - Road Rage 1 (Europe)",        0x0051BE9F),
     BurnoutItem(21051051, "Vineyard - Face-Off (Europe)",           0x0051BEA7),
     BurnoutItem(21051052, "Vineyard - Coupe GP (Europe)",           0x0051BEAA),
     BurnoutItem(21051053, "Vineyard - Road Rage 2 (Europe)",        0x0051BEAD),
