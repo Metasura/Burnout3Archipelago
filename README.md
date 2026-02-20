@@ -13,13 +13,14 @@ Archipelago for Burnout 3 Takedown
 
 ## YAML Options
 - Otherwise you will start with a random Race + Car + Crash in All Mode, 2 Random Races (1 Normal and 1 Special (GP Excluded)) + 1 Car in Race Mode or 2 Random Crashs in Crash Mode.
-- You can choose how many Gold Medal you need to complete the game.
+- You can choose how many Medal you need to complete the game.
+- You can choose which medal is needed to win (Gold, Silver or Bronze).
+- You can choose the number of generated events.
 - All Mode : You need x Gold Medal up to 173.
 - Race Mode : You need x Gold Medal up to 73 .
 - Crash Mode : You need x Gold Medal up to 100.
 - You can enable the Signature Takedowns (20) (Only in All Mode or Race Mode).
 - You can enable the Crash Headline (10) (Only in All Mode or Crash Mode).
-- Option lower required medal to Silver or Bronze (Bronze would break Solo Gen) coming soon.
 - Trophies coming soon.
     
 ## Known Issue
