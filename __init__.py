@@ -108,9 +108,9 @@ EVENT_CAR_CLASSES = {
 SIGNATURE_BY_RACE = {
     "Gone Fishin'": ["Silver Lake - Race (USA)", "Silver Lake - Compact GP (USA)", "Silver Lake - Eliminator (USA)", "Lakeside Getaway - Face-Off 1 (USA)", "Lakeside Getaway - Race (USA)", "Lakeside Getaway - Face-Off 2 (USA)", "Kings Of The Road - Face-Off (USA)", "Kings Of The Road - Race (USA)"], 
     "Home Wrecker": ["Silver Lake - Race (USA)", "Silver Lake - Compact GP (USA)", "Silver Lake - Eliminator (USA)", "Lakeside Getaway - Face-Off 1 (USA)", "Lakeside Getaway - Race (USA)", "Lakeside Getaway - Face-Off 2 (USA)"],
-    "Pillar Driller": ["Downtown - Road Rage 1 (USA)", "Downtown - Race 1 (USA)", "Downtown - Race 2 (USA)", "Downtown - Road Rage 2 (USA)", "Kings Of The Road - Face-Off (USA)", "Kings Of The Road - Race (USA)"],
-    "Hit the Split": ["Downtown - Road Rage 1 (USA)", "Downtown - Race 1 (USA)", "Downtown - Race 2 (USA)", "Downtown - Road Rage 2 (USA)", "Mountain Parkway - Face-Off 1 (USA)", "Mountain Parkway - Road Rage (USA)", "Mountain Parkway - Face-Off 2 (USA)"],
-    "Tram Ram": ["Waterfront - Face-Off (USA)", "Waterfront - Muscle GP (USA)", "Mountain Parkway - Face-Off 1 (USA)", "Mountain Parkway - Road Rage (USA)", "Mountain Parkway - Face-Off 2 (USA)"],
+    "Pillar Driller": ["Downtown - Road Rage 1 (USA)", "Downtown - Race 1 (USA)", "Downtown - Race 2 (USA)", "Downtown - Road Rage 2 (USA)", "Kings Of The Road - Face-Off (USA)", "Kings Of The Road - Race (USA)", "Mountain Parkway - Face-Off 2 (USA)"],
+    "Hit the Split": ["Downtown - Road Rage 1 (USA)", "Downtown - Race 1 (USA)", "Downtown - Race 2 (USA)", "Downtown - Road Rage 2 (USA)", "Mountain Parkway - Road Rage (USA)"],
+    "Tram Ram": ["Waterfront - Face-Off (USA)", "Waterfront - Muscle GP (USA)", "Mountain Parkway - Face-Off 1 (USA)", "Mountain Parkway - Road Rage (USA)"],
     "Truck Torpedo": ["Downtown - Road Rage 1 (USA)", "Downtown - Race 1 (USA)", "Downtown - Race 2 (USA)", "Downtown - Road Rage 2 (USA)", "Waterfront - Face-Off (USA)", "Waterfront - Muscle GP (USA)", "Silver Lake - Race (USA)", "Silver Lake - Compact GP (USA)", "Silver Lake - Eliminator (USA)"],
     "Euro Tram Ram": ["Winter City - Race (Europe)", "Winter City - Eliminator (Europe)"],
     "Snowed Under": ["Winter City - Race (Europe)", "Winter City - Eliminator (Europe)", "Alpine - Road Rage (Europe)", "Alpine - Race (Europe)", "Alpine - Face-Off (Europe)"],
@@ -216,7 +216,7 @@ class Burnout3World(World):
         mode = self.options.gameplay_mode.value
         if mode == 1: return RACE_EVENT_NAMES
         elif mode == 2: return CRASH_EVENT_NAMES
-        else: return ALL_EVENT_NAMES
+        else: return RACE_EVENT_NAMES + CRASH_EVENT_NAMES
 
     def generate_early(self):
         mode = self.options.gameplay_mode.value
@@ -315,37 +315,36 @@ class Burnout3World(World):
         if not has_valid_combo:
             
             
-            available_races = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) != "Special" and "GP" not in e]
-            available_special = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) == "Special" and "GP" not in e]
-            available_crashes = [e for e in ALL_EVENT_NAMES if e in CRASH_EVENT_NAMES]
+            available_special = [e for e in active_events if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) == "Special" and "GP" not in e]
+            available_races = [e for e in active_events if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) != "Special" and "GP" not in e]
+            available_crashes = [e for e in active_events if e in CRASH_EVENT_NAMES]
             
             events_to_unlock = []
 
-            if mode == 1:
-                if not available_races: available_races = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) != "Special" and "GP" not in e]
-                if not available_special: available_special = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and EVENT_CAR_CLASSES.get(e) == "Special" and "GP" not in e]
-
-                if len(available_races) >= 1 and len(available_special) >= 1:
-                    events_to_unlock = [self.multiworld.random.choice(available_races),self.multiworld.random.choice(available_special)]
+            def get_safe_start(preferred_list, fallback_list):
+                if preferred_list:
+                    return self.multiworld.random.choice(preferred_list)
+                elif fallback_list:
+                    return self.multiworld.random.choice(fallback_list)
                 else:
-                    events_to_unlock = available_races[:2]
+                    return self.multiworld.random.choice(active_events)
+
+            if mode == 1:
+                r1 = get_safe_start(available_races, [e for e in active_events if e in RACE_EVENT_NAMES])
+                races_sans_r1 = [e for e in available_races if e != r1]
+                r2 = get_safe_start(races_sans_r1, [e for e in active_events if e in RACE_EVENT_NAMES and e != r1])
+                events_to_unlock = [r1, r2]
             
             elif mode == 2: 
-                if len(available_crashes) >= 2:
-                    events_to_unlock = self.multiworld.random.sample(available_crashes, 2)
-                else:
-                    events_to_unlock = available_crashes
+                c1 = get_safe_start(available_crashes, [e for e in active_events if e in CRASH_EVENT_NAMES])
+                crash_sans_c1 = [e for e in available_crashes if e != c1]
+                c2 = get_safe_start(crash_sans_c1, [e for e in active_events if e in CRASH_EVENT_NAMES and e != c1])
+                events_to_unlock = [c1, c2]
             
             else:
-                if not available_races: available_races = [e for e in ALL_EVENT_NAMES if e in RACE_EVENT_NAMES and "GP" not in e]
-                if not available_crashes: available_crashes = [e for e in ALL_EVENT_NAMES if e in CRASH_EVENT_NAMES]
-
-                if available_races and available_crashes:
-                    r = self.multiworld.random.choice(available_races)
-                    c = self.multiworld.random.choice(available_crashes)
-                    events_to_unlock = [r, c]
-                else:
-                    events_to_unlock = self.multiworld.random.sample(ALL_EVENT_NAMES, 2)
+                r = get_safe_start(available_races, [e for e in active_events if e in RACE_EVENT_NAMES])
+                c = get_safe_start(available_crashes, [e for e in active_events if e in CRASH_EVENT_NAMES])
+                events_to_unlock = [r, c]
 
             for event_name in events_to_unlock:
                 unlock_item_name = f"Unlock {event_name}"
@@ -473,8 +472,8 @@ class Burnout3World(World):
             required_class = EVENT_CAR_CLASSES.get(event_name)
             return has_car_class(state, required_class)
 
-        for event_name, required_class in EVENT_CAR_CLASSES.items():
-            def event_rule(state, e_name=event_name):
+        for event_name in self.actual_event_list:
+            def event_rule(state, e_name=event_name): 
                 return can_access_event(state, e_name)
 
             for medal in ["Bronze", "Silver", "Gold"]:
