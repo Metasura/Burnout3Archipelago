@@ -110,7 +110,7 @@ SIGNATURE_BY_RACE = {
     "Home Wrecker": ["Silver Lake - Race (USA)", "Silver Lake - Compact GP (USA)", "Silver Lake - Eliminator (USA)", "Lakeside Getaway - Face-Off 1 (USA)", "Lakeside Getaway - Race (USA)", "Lakeside Getaway - Face-Off 2 (USA)"],
     "Pillar Driller": ["Downtown - Road Rage 1 (USA)", "Downtown - Race 1 (USA)", "Downtown - Race 2 (USA)", "Downtown - Road Rage 2 (USA)", "Kings Of The Road - Face-Off (USA)", "Kings Of The Road - Race (USA)", "Mountain Parkway - Face-Off 2 (USA)"],
     "Hit the Split": ["Downtown - Road Rage 1 (USA)", "Downtown - Race 1 (USA)", "Downtown - Race 2 (USA)", "Downtown - Road Rage 2 (USA)", "Mountain Parkway - Road Rage (USA)"],
-    "Tram Ram": ["Waterfront - Face-Off (USA)", "Waterfront - Muscle GP (USA)", "Mountain Parkway - Face-Off 1 (USA)", "Mountain Parkway - Road Rage (USA)"],
+    "Tram Ram": ["Waterfront - Face-Off (USA)", "Waterfront - Muscle GP (USA)"],
     "Truck Torpedo": ["Downtown - Road Rage 1 (USA)", "Downtown - Race 1 (USA)", "Downtown - Race 2 (USA)", "Downtown - Road Rage 2 (USA)", "Waterfront - Face-Off (USA)", "Waterfront - Muscle GP (USA)", "Silver Lake - Race (USA)", "Silver Lake - Compact GP (USA)", "Silver Lake - Eliminator (USA)"],
     "Euro Tram Ram": ["Winter City - Race (Europe)", "Winter City - Eliminator (Europe)"],
     "Snowed Under": ["Winter City - Race (Europe)", "Winter City - Eliminator (Europe)", "Alpine - Road Rage (Europe)", "Alpine - Race (Europe)", "Alpine - Face-Off (Europe)"],
