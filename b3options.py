@@ -34,6 +34,10 @@ class EnableSignatures(Toggle):
 class EnableHeadlines(Toggle):
     display_name = "Enable Crash Headlines"
 
+class DeathLink(Toggle):
+    display_name = "DeathLink"
+    default = 0
+
 
 @dataclass
 class Burnout3Options(PerGameCommonOptions):
@@ -43,4 +47,5 @@ class Burnout3Options(PerGameCommonOptions):
     required_medals: RequiredMedals
     enable_signatures: EnableSignatures
     enable_headlines: EnableHeadlines
+    death_link: DeathLink
     

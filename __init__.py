@@ -410,7 +410,8 @@ class Burnout3World(World):
             "req_golds": self.final_req_count,
             "req_medal_type": self.options.medal_type.value, 
             "req_sigs": req_sigs,
-            "req_heads": req_heads
+            "req_heads": req_heads,
+            "death_link": self.options.death_link.value
         }
 
     def create_item(self, name: str) -> Item:
