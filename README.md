@@ -10,6 +10,11 @@ Archipelago for Burnout 3 Takedown
 - Enable PINE in PCSX2
   - In PCSX2, Under Tools, **Check** Show Advanced Settings.
   - In PCSX2, System ---> Settings ---> Advanced tab ---> PINE Settings, **Check** Enable and ensure Slot is set to 28011.
+- Download the latest pnach file from release
+  - Launch the game a first time
+  - In PCSX2, Under Tools, Click on Edit Patch
+  - A text editor should pop up paste the content of the pnach file inside and save
+  - Close the game and launch it again a popup will show that a patch as been loaded
 
 ## YAML Options
 - Otherwise you will start with a random Race + Car + Crash in All Mode, 2 Random Races (1 Normal and 1 Special (GP Excluded)) + 1 Car in Race Mode or 2 Random Crashs in Crash Mode.
