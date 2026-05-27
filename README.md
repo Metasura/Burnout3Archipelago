@@ -32,3 +32,4 @@ Archipelago for Burnout 3 Takedown
 ## Known Issue
  - In Race Mode (and probably All Mode) the car can rarely be replaced by a filler item (Bonus Point), game should still be beatable.
  - The game will not generate if you select too few events when solo playing.
+-The pnach file causes some issues on Linux systems.
