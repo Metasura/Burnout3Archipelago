@@ -3658,11 +3658,3 @@ patch=1,EE,207A5208,extended,00198070
 
 // 5. "DeathLink Status" (CRASH DAMAGE to 0x00198090)
 patch=1,EE,207A5BA8,extended,00198090
-
-// =================================================================
-// 6. ARCHIPELAGO - DISABLE VANILLA UNLOCKS & EVALUATIONS
-// =================================================================
-
-// Do things maybe
-patch=1,EE,2042F510,extended,03E00008 // jr ra
-patch=1,EE,2042F514,extended,00000000 // nop
