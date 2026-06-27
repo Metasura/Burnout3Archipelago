@@ -3,7 +3,7 @@ Archipelago for Burnout 3 Takedown
 
 ## ⚠️ WARNING
 - You need a PS2 Burnout 3 US ISO (`SLUS-21050`).
-- You need PCSX2 Lastest Stable (`v2.6.3`). (Nightly doesn't work for some reason).
+- You need PCSX2 Lastest Stable (`v2.6.3`). (Nightly might not work for some reason).
 - After each Race or Crash go back to the main menu (If you don't you might see location that you don't have/don't see ones you do).
 
 ## PCSX2 Settings
